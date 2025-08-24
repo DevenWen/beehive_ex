@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package echo;
+
+message EchoReq { string name = 1; }
+
+message EchoReply { string message = 1; }
+
+service Greeter { rpc SayHello(EchoReq) returns (EchoReply); }
