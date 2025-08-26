@@ -31,6 +31,7 @@ defmodule BeeRpc.MixProject do
   defp deps do
     [
       {:protobuf, "~> 0.14"},
+      {:nimble_pool, "~> 1.0"},
       {:grpc, "~> 0.10"},
       {:bee_utils, in_umbrella: true}
       # {:dep_from_hexpm, "~> 0.3.0"},
