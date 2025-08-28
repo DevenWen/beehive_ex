@@ -4,7 +4,7 @@ defmodule BeeRpcTest do
 
   setup do
     # Start the BeeRpc application for integration tests
-    {ok, _pid} = start_supervised(BeeRpc.Server.Sup)
+    {:ok, _pid} = start_supervised(BeeRpc.Server.Sup)
     :ok
   end
 
@@ -25,12 +25,26 @@ defmodule BeeRpcTest do
   test "get server_info from register" do
     service = Echo.Greeter.Stub.__meta__(:service)
     name = service.__meta__(:name)
-    {:ok, server_info} = BeeRpc.Register.get_service(name)
-    {:ok, server_info} = BeeRpc.Register.get_service(name, "SayHello")
 
-    {:ok, channel} = GRPC.Stub.connect("#{server_info.address}:#{server_info.port}")
-    {:ok, reply} = Echo.Greeter.Stub.say_hello(channel, %Echo.EchoReq{name: "Bob"})
+    with {:ok, server_infos} <- BeeRpc.Client.Discover.find_service(name, "SayHello"),
+         {:ok, server_info} <- BeeRpc.Client.LoadBalancer.choose(server_infos),
+         {:ok, channel} <- BeeRpc.Client.ChannelManager.get_channel(server_info) do
+      {:ok, reply} = Echo.Greeter.Stub.say_hello(channel, %Echo.EchoReq{name: "Bob"})
+      assert reply.message == "Hello, Bob!"
+    end
+  end
 
-    assert reply.message == "Hello, Bob!"
+  test "test multiplexing" do
+    # 结论：支持多路复用。cool!
+    {:ok, channel} = GRPC.Stub.connect("localhost:50051")
+
+    1..1000
+    |> Enum.map(fn i ->
+      Task.async(fn ->
+        {:ok, reply} = Echo.Greeter.Stub.say_hello(channel, %Echo.EchoReq{name: "Bob#{i}"})
+        assert reply.message == "Hello, Bob#{i}!"
+      end)
+    end)
+    |> Enum.map(&Task.await/1)
   end
 end

@@ -1,10 +1,10 @@
-defmodule BeeRpc.Server.ServiceInfo do
+defmodule BeeRpc.ServerInfo do
   @moduledoc """
   Defines the structure for service information used in service registration and discovery.
 
-  ServiceInfo struct contains:
-    - :name - The name of the service (string).
-    - :address - The address where the service is hosted (string).
+  ServerInfo struct contains:
+    - :service - The name of the service (string).
+    - :host - The address where the service is hosted (string).
     - :port - The port number on which the service listens (integer).
     - :metadata - Optional metadata about the service (map).
     - :functions - List of functions provided by the service (list of strings).
@@ -14,17 +14,17 @@ defmodule BeeRpc.Server.ServiceInfo do
   """
 
   @type t :: %__MODULE__{
-          name: String.t(),
-          address: String.t(),
+          service: String.t(),
+          host: String.t(),
           port: non_neg_integer(),
           metadata: map() | nil,
           functions: [String.t()]
         }
 
-  @enforce_keys [:name, :address, :port, :functions]
+  @enforce_keys [:service, :host, :port, :functions]
   defstruct [
-    :name,
-    :address,
+    :service,
+    :host,
     :port,
     :metadata,
     :functions
