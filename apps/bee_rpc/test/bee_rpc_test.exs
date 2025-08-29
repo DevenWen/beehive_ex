@@ -15,7 +15,7 @@ defmodule BeeRpcTest do
 
       # Act
       {:ok, channel} = GRPC.Stub.connect("localhost:50051")
-      {:ok, reply} = Echo.Greeter.Stub.say_hello(channel, request)
+      {:ok, reply} = Echo.Greeter.Stub.Handler.say_hello(channel, request)
 
       # Assert
       assert reply.message == "Hello, Alice!"
@@ -29,9 +29,14 @@ defmodule BeeRpcTest do
     with {:ok, server_infos} <- BeeRpc.Client.Discover.find_service(name, "SayHello"),
          {:ok, server_info} <- BeeRpc.Client.LoadBalancer.choose(server_infos),
          {:ok, channel} <- BeeRpc.Client.ChannelManager.get_channel(server_info) do
-      {:ok, reply} = Echo.Greeter.Stub.say_hello(channel, %Echo.EchoReq{name: "Bob"})
+      {:ok, reply} = Echo.Greeter.Stub.Handler.say_hello(channel, %Echo.EchoReq{name: "Bob"})
       assert reply.message == "Hello, Bob!"
     end
+  end
+
+  test "rpc with discover and loadbalance" do
+    assert {:ok, %{message: "Hello, Charlie!"}} =
+             Echo.Greeter.Stub.say_hello(%Echo.EchoReq{name: "Charlie"})
   end
 
   test "test multiplexing" do
@@ -41,7 +46,7 @@ defmodule BeeRpcTest do
     1..1000
     |> Enum.map(fn i ->
       Task.async(fn ->
-        {:ok, reply} = Echo.Greeter.Stub.say_hello(channel, %Echo.EchoReq{name: "Bob#{i}"})
+        {:ok, reply} = Echo.Greeter.Stub.Handler.say_hello(channel, %Echo.EchoReq{name: "Bob#{i}"})
         assert reply.message == "Hello, Bob#{i}!"
       end)
     end)
