@@ -1,6 +1,6 @@
 # BeeRpc
 
-a grpc rpc framework with register and discovery for elixir. 
+a grpc rpc framework with service register and discovery for elixir. 
 1. Define grpc service with proto file.
 2. implement service and start server.
 3. client call service.
