@@ -46,7 +46,8 @@ defmodule BeeRpcTest do
     1..1000
     |> Enum.map(fn i ->
       Task.async(fn ->
-        {:ok, reply} = Echo.Greeter.Stub.Handler.say_hello(channel, %Echo.EchoReq{name: "Bob#{i}"})
+        {:ok, reply} =
+          Echo.Greeter.Stub.Handler.say_hello(channel, %Echo.EchoReq{name: "Bob#{i}"})
         assert reply.message == "Hello, Bob#{i}!"
       end)
     end)
