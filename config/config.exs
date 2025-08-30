@@ -4,7 +4,11 @@ import Config
 config :bee_rpc,
   client: [
     discover: [
-      handler: BeeRpc.Client.Discover.ETS
+      handler: BeeRpc.Client.Discover.Etcd,
+      opts: [
+        etcd_url: "http://localhost:2379",
+        prefix: "/bee_rpc/dev"
+      ]
     ],
     load_balancer: [
       handler: BeeRpc.Client.LoadBalancer.Random
@@ -14,7 +18,7 @@ config :bee_rpc,
     handler: BeeRpc.Endpoint,
     opts: [
       start_server: true,
-      port: 50051
+      port: String.to_integer(System.get_env("PORT") || "50051")
     ],
     register: [
       handler: BeeRpc.Server.Register.Etcd,

@@ -27,6 +27,27 @@ defmodule BeeRpc.ServerInfo do
     :host,
     :port,
     :metadata,
-    :functions
+    :functions,
+    # version to store etcd
+    :version
   ]
+
+  def from_json_str(json_str, version \\ nil) do
+    case JSON.decode(json_str) do
+      {:ok, map} when is_map(map) ->
+        result = %__MODULE__{
+          service: map["service"],
+          host: map["host"],
+          port: map["port"],
+          metadata: map["metadata"],
+          functions: map["functions"],
+          version: version
+        }
+
+        {:ok, result}
+
+      {:error, reason} ->
+        {:error, reason}
+    end
+  end
 end

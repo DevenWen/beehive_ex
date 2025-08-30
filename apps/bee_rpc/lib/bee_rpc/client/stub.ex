@@ -30,9 +30,14 @@ defmodule BeeRpc.Client.Stub do
                      unquote(service_name),
                      unquote(to_string(name))
                    ),
-                 {:ok, server_info} <- BeeRpc.Client.LoadBalancer.choose(server_infos),
-                 {:ok, channel} <- BeeRpc.Client.ChannelManager.get_channel(server_info) do
-              apply(Handler, unquote(String.to_atom(func_name)), [channel, opts])
+                 {:ok, server_info} <- BeeRpc.Client.LoadBalancer.choose(server_infos) do
+              # FIXME callback hell is ugly
+              case BeeRpc.Client.ChannelManager.execute_by_channel(server_info, fn channel ->
+                     apply(Handler, unquote(String.to_atom(func_name)), [channel, opts])
+                   end) do
+                {:retry, _reason} -> unquote(String.to_atom(func_name))(opts)
+                result -> result
+              end
             end
           end
         else
@@ -42,9 +47,14 @@ defmodule BeeRpc.Client.Stub do
                      unquote(service_name),
                      unquote(to_string(name))
                    ),
-                 {:ok, server_info} <- BeeRpc.Client.LoadBalancer.choose(server_infos),
-                 {:ok, channel} <- BeeRpc.Client.ChannelManager.get_channel(server_info) do
-              apply(Handler, unquote(String.to_atom(func_name)), [channel, request, opts])
+                 {:ok, server_info} <- BeeRpc.Client.LoadBalancer.choose(server_infos) do
+              # FIXME callback hell is ugly
+              case BeeRpc.Client.ChannelManager.execute_by_channel(server_info, fn channel ->
+                     apply(Handler, unquote(String.to_atom(func_name)), [channel, request, opts])
+                   end) do
+                {:retry, _reason} -> unquote(String.to_atom(func_name))(request, opts)
+                result -> result
+              end
             end
           end
         end

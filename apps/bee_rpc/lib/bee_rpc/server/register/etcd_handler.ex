@@ -16,6 +16,7 @@ defmodule BeeRpc.Server.Register.EtcdHandler do
 
   @impl true
   def init({opts, conn}) do
+    Logger.info("Init Etcd Register with opts: #{inspect(opts)}")
     Process.flag(:trap_exit, true)
     endpoint = Keyword.get(opts, :endpoint)
     server_infos = Register.get_all_server_infos_from_endpoint(endpoint)
@@ -57,8 +58,8 @@ defmodule BeeRpc.Server.Register.EtcdHandler do
     # key => #{prefix}/#{service}/#{host}
     {:ok, %{:ID => lease_id} = _granted} = EtcdEx.grant(conn, 10)
 
-    Enum.each(server_infos, fn %ServerInfo{service: service, host: host} = info ->
-      key = Path.join(["/", prefix, service, host])
+    Enum.each(server_infos, fn %ServerInfo{service: service, host: host, port: port} = info ->
+      key = Path.join(["/", prefix, service, host, to_string(port)])
       value = info |> Map.from_struct() |> JSON.encode!()
       opts = [prev_kv: true, lease: lease_id]
       {:ok, result} = EtcdEx.put(conn, key, value, opts)

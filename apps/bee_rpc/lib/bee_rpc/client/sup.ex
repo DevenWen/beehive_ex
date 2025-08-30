@@ -3,8 +3,7 @@ defmodule BeeRpc.Client.Sup do
   Supervisor for BeeRpc Client
 
   Design is
-  Supe
-   | -- BeeRpc.Client.Pool (Pooling the gRPC connection)
+  Sup
    | -- BeeRpc.Discovery (Discovery the gRPC service)
 
   """
@@ -16,11 +15,13 @@ defmodule BeeRpc.Client.Sup do
 
   @impl true
   def init(_opts) do
-    children = [
-    ]
+    config = Application.get_env(:bee_rpc, :client)
+    config = Keyword.validate!(config, [:discover, :load_balancer])
+    discover = Keyword.validate!(config[:discover], [:handler, opts: []])
+
+    children = discover[:handler].children_spec(discover[:opts])
 
     # Use :one_for_all strategy as specified in the design
     Supervisor.init(children, strategy: :one_for_all)
   end
-
 end

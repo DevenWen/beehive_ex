@@ -6,6 +6,11 @@ defmodule BeeRpc.Client.Discover.ETS do
   @ets_table :bee_rpc_services
 
   @impl true
+  def children_spec(_opts) do
+    []
+  end
+
+  @impl true
   def find_service(service, method) do
     case :ets.lookup(@ets_table, {service, method}) do
       [{_, service_info}] -> {:ok, [service_info]}
