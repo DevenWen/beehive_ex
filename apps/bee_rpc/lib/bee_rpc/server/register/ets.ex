@@ -9,6 +9,18 @@ defmodule BeeRpc.Server.Register.ETS do
   alias BeeRpc.Server.Register
   @ets_table :bee_rpc_services
 
+
+  def children_spec(opts) do
+    [
+      %{
+        id: BeeRpc.Server.Register.ETS,
+        start: {__MODULE__, :start_link, [opts]},
+        type: :worker,
+        restart: :permanent
+      }
+    ]
+  end
+
   @doc """
   Starts the ETS register service.
   """

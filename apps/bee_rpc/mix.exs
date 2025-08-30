@@ -33,6 +33,7 @@ defmodule BeeRpc.MixProject do
       {:protobuf, "~> 0.14"},
       {:nimble_pool, "~> 1.0"},
       {:grpc, "~> 0.10"},
+      {:etcdex, "~> 2.0"},
       {:bee_utils, in_umbrella: true}
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}

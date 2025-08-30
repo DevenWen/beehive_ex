@@ -37,16 +37,7 @@ defmodule BeeRpc.Server.Register do
   end
 
   @doc """
-  Retrieves service information by service name.
-
-  Returns `{:ok, %ServerInfo{}}` if the service is found, `{:error, :not_found}` otherwise.
+  Defines the children specs for the register process.
   """
-  @callback get_service(service :: String.t()) :: {:ok, ServerInfo.t()} | {:error, :not_found}
-
-  @doc """
-  Retrieves service information by service name and function name.
-
-  Returns `{:ok, %ServerInfo{}}` if the service and function are found, `{:error, :not_found}` otherwise.
-  """
-  @callback get_service(service :: String.t(), function :: String.t()) :: {:ok, ServerInfo.t()} | {:error, :not_found}
+  @callback children_spec(opts :: [term()]) :: [Supervisor.child_spec()]
 end

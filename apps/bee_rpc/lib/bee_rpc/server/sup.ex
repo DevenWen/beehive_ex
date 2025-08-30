@@ -27,8 +27,7 @@ defmodule BeeRpc.Server.Sup do
       Keyword.validate!(config[:register], [:handler, opts: []])
 
     register_opts =
-      Keyword.validate!(register[:opts], [])
-      |> Keyword.put(:endpoint, config[:handler])
+      Keyword.put(register[:opts], :endpoint, config[:handler])
 
     children = [
       {
@@ -38,14 +37,8 @@ defmodule BeeRpc.Server.Sup do
           start_server: config[:opts][:start_server],
           port: config[:opts][:port],
         ]
-      },
-      %{
-        id: BeeRpc.Server.Register,
-        start: {register[:handler], :start_link, [register_opts]},
-        type: :worker,
-        restart: :permanent
       }
-    ]
+    ] ++ register[:handler].children_spec(register_opts)
 
     # Use :one_for_all strategy as specified in the design
     Supervisor.init(children, strategy: :one_for_all)

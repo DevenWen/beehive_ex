@@ -17,7 +17,10 @@ config :bee_rpc,
       port: 50051
     ],
     register: [
-      handler: BeeRpc.Server.Register.ETS,
-      opts: []
+      handler: BeeRpc.Server.Register.Etcd,
+      opts: [
+        etcd_url: "http://localhost:2379",
+        prefix: "/bee_rpc/dev"
+      ]
     ]
   ]
