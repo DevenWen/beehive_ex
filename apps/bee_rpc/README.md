@@ -1,21 +1,14 @@
 # BeeRpc
 
-**TODO: Add description**
+a grpc rpc framework with register and discovery for elixir. 
+1. Define grpc service with proto file.
+2. implement service and start server.
+3. client call service.
 
-## Installation
+this project finish the services register and discovery. It could make it easy to use in a larget microservice system.
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `bee_rpc` to your list of dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [
-    {:bee_rpc, "~> 0.1.0"}
-  ]
-end
-```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at <https://hexdocs.pm/bee_rpc>.
-
+## Roadmap
+[x] grpc service register and discovery with etcd
+[ ] grateful shutdown
+[ ] channel pool manage
+[ ] monitor for p8s
